@@ -19,4 +19,4 @@ document.getElementById('send').addEventListener('click', () => {
         socket.emit('message', message);
         usrMsg.value = '';
     }
-});
+}); 
