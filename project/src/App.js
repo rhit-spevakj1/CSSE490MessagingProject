@@ -2,7 +2,7 @@ import './App.css';
 import {useEffect, useState} from "react";
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore,collection, addDoc } from "firebase/firestore";
+import { getFirestore,collection, addDoc,getDocs } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -23,21 +23,35 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 function App() {
     const [message,setMessage]=useState('');
-    const[userName,setUserName]=useState('');
+    const [userName,setUserName]=useState('');
+    const [pubMessages,setPubMessages]=useState({});
     function handleMessageChange(e){
         setMessage(e.target.value);
     }
     function handleUserNameChange(e){
         setUserName(e.target.value);
     }
-    useEffect(()=>{
-
-    },[])
+    async function updatePubs(){
+        let dataArray=[];
+        try {
+            console.log('checking')
+            const querySnapshot = await getDocs(collection(db, 'pubmessage'));
+            querySnapshot.forEach((doc) => {
+                console.log(JSON.stringify(doc))
+                dataArray.push(doc);
+            });
+            setPubMessages(dataArray);
+            console.log('succees');
+        }catch(e){
+            console.error(e);
+        }
+    }
     async function sendPubMessage(){
         try {
             const docRef = await addDoc(collection(db, 'pubmessage'), {
                 message: `${message}`,
-                userName: `${userName}`
+                userName: `${userName}`,
+                time: Date
             });
             console.log("doc written",docRef.id);
         }catch(e){
@@ -63,6 +77,7 @@ function App() {
               <div>Username<input value={userName} onChange={handleUserNameChange}/></div>
               <div>message<input value={message} onChange={handleMessageChange}/></div>
               <button onClick={sendPubMessage}>Send Message</button>
+              <button onClick={updatePubs}>Update public messages</button>
           </div>
       </div>
   );
