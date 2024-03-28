@@ -8,6 +8,10 @@ import { getFirestore,collection, addDoc,getDocs} from "firebase/firestore";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+
+const fs = require('fs');
+const path = require('path'); 
+
 const firebaseConfig = {
     apiKey: "AIzaSyDk53KyMpPmX6blCDISkg-yF4-qEXA82hw",
     authDomain: "tweeter-89ead.firebaseapp.com",
@@ -51,6 +55,10 @@ function App() {
                 createdAt: Date.now()
             });
             console.log("doc written",docRef.id);
+
+            const logEntry = `${createdAt} - User ID: ${userName} - Message: ${message}\n`;
+            
+            this.logStream.write()
         }catch(e){
             console.error("error sending",e);
         }
